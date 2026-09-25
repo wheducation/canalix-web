@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canalix — Blueprint de fundación (arquitectura + roadmap)</title>
+<style>
+  :root{
+    --brand:#1F6FEB; --brand-dark:#0B4FCC; --ink:#0E1726; --muted:#5B6b80;
+    --bg:#ffffff; --soft:#F4F7FB; --line:#E3E9F2; --ok:#16A34A; --warn:#B45309; --ai:#7C3AED;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--soft);line-height:1.6;padding:32px 16px}
+  .wrap{max-width:900px;margin:0 auto}
+  .logo{font-weight:800;font-size:26px;letter-spacing:-.5px}
+  .logo span{color:var(--brand)}
+  .sub{color:var(--muted);margin:4px 0 26px;font-size:15px}
+  h2{font-size:20px;margin:32px 0 6px;letter-spacing:-.3px}
+  .lead{color:var(--muted);font-size:14px;margin-bottom:14px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:14px}
+  .card h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:6px}
+  .pill.base{background:#DBEAFE;color:var(--brand-dark)}
+  .pill.ai{background:#EDE9FE;color:var(--ai)}
+  .pill.ok{background:#DCFCE7;color:var(--ok)}
+  .pill.wait{background:#FEF3C7;color:var(--warn)}
+  ul{margin:6px 0 0 20px}
+  li{margin:5px 0;font-size:14.5px}
+  li b{font-weight:700}
+  .arch{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:24px}
+  .layer{border-radius:12px;padding:16px 18px;margin:10px 0;border:1.5px solid}
+  .layer.l-ai{border-color:var(--ai);background:#FAF7FF}
+  .layer.l-brand{border-color:var(--brand);background:#F3F8FF}
+  .layer.l-base{border-color:var(--line);background:var(--soft)}
+  .layer .lt{font-weight:800;font-size:14px;margin-bottom:3px}
+  .layer .ld{font-size:13px;color:var(--muted)}
+  .arrow{text-align:center;color:var(--muted);font-size:18px;margin:-4px 0}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px}
+  .phase{display:flex;gap:14px;margin-bottom:2px}
+  .phase .n{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .phase.done .n{background:var(--ok)}
+  .phase.wait .n{background:var(--warn)}
+  .foot{color:var(--muted);font-size:12px;margin:26px 0 0;text-align:center;line-height:1.6}
+  .note{font-size:13px;color:var(--muted);background:var(--soft);border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">Canal<span>ix</span></div>
+  <div class="sub">Blueprint de fundación — cómo se arma el producto: base Beds24 con tu marca + tu capa de AI encima.</div>
+
+  <h2>1. Arquitectura en 3 capas</h2>
+  <div class="lead">De abajo hacia arriba: el motor que ya existe, tu marca encima, y tu diferenciador (AI) hasta arriba.</div>
+  <div class="arch">
+    <div class="layer l-ai">
+      <div class="lt">🟣 CAPA 3 — Tu software propio (AI) &nbsp;<span class="pill ai">Tu ventaja</span></div>
+      <div class="ld">Lo que te hace distinto y nadie más tiene. Bots de mensajería y reviews con AI, automatizaciones a la medida. Corre por fuera de Beds24 y se conecta por API. <b>Aquí está el valor que justifica cobrar más.</b></div>
+    </div>
+    <div class="arrow">▲ se conecta por API</div>
+    <div class="layer l-brand">
+      <div class="lt">🔵 CAPA 2 — Tu marca (white-label)</div>
+      <div class="ld">Logo, favicon, colores, tu dominio (bookings.tudominio.com), correos desde tu servidor, página de registro propia. El cliente ve TU marca, nunca "Beds24".</div>
+    </div>
+    <div class="arrow">▲ configurado sobre</div>
+    <div class="layer l-base">
+      <div class="lt">⚙️ CAPA 1 — Motor Beds24 (base)</div>
+      <div class="ld">Channel manager, calendario, sincronización, booking engine, sub-cuentas. Ya construido, hospedado y actualizado por Beds24. Tú no lo programas — lo revendes con tu marca.</div>
+    </div>
+    <div class="note">Tu modelo NO es "revender Beds24 pelado" — es <b>Beds24 invisible por debajo + tu AI por encima</b>. El cliente compra la experiencia Canalix, no sabe que Beds24 existe.</div>
+  </div>
+
+  <h2>2. Qué te da el white-label de Beds24 <span class="pill base">Base</span></h2>
+  <div class="card">
+    <h3>✅ Se puede rebrandear</h3>
+    <ul>
+      <li><b>Booking page y control panel</b> bajo tu propio dominio.</li>
+      <li><b>Tu logo, favicon y colores</b> (visibles al entrar desde tu dominio).</li>
+      <li><b>Channel manager white-label</b> para Airbnb, Booking.com, Expedia y Vrbo.</li>
+      <li><b>Correos</b> enviados desde tu servidor / tu dirección.</li>
+      <li><b>Página de registro (sign-up)</b> propia para clientes nuevos.</li>
+      <li><b>Sub-cuentas por cliente</b> con permisos (lectura/escritura o solo lectura), menús ocultables.</li>
+      <li>Link "powered by" apunta a TU URL de marketing.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>⚠️ Límites (importante saberlos)</h3>
+    <ul>
+      <li><b>Booking.com, Expedia y Vrbo:</b> hay que avisarle a Beds24 <b>ANTES de hacer la primera conexión</b> para que quede white-label. Airbnb no tiene ese problema.</li>
+      <li><b>Panel en español:</b> solo parcial (inglés/alemán completos). Se pueden cambiar palabras sueltas a mano — Beds24 da un archivo para empezar.</li>
+      <li><b>Soporte de Beds24:</b> solo para TI (el reseller), en inglés o alemán. A tus clientes los soportas tú.</li>
+      <li><b>App móvil white-label:</b> posible pero cara (~cientos USD en cuentas de app store + ~US$1.000 por el clon + costo por cada update). Opcional, se puede saltar al inicio.</li>
+      <li><b>Plugin de WordPress:</b> NO se puede rebrandear.</li>
+      <li>No dan exclusividad territorial.</li>
+    </ul>
+  </div>
+
+  <h2>3. Qué necesitas tener listo <span class="pill wait">Requisitos</span></h2>
+  <div class="card">
+    <table>
+      <tr><th>Requisito</th><th>Detalle</th><th>Estado</th></tr>
+      <tr><td><b>Cuenta Beds24 al día</b></td><td>Saldo positivo (costo actual ~71.65 EUR/mes).</td><td><span class="pill ok">Hecho</span></td></tr>
+      <tr><td><b>Funciones reseller activadas</b></td><td>Se piden por ticket de soporte. Sin esto no aparece el menú RESELLER.</td><td><span class="pill wait">Ticket listo p/ enviar</span></td></tr>
+      <tr><td><b>Nombre de marca</b></td><td>El negocio opera bajo TU nombre (no "Beds24"). Placeholder actual: "Canalix".</td><td><span class="pill wait">Por decidir</span></td></tr>
+      <tr><td><b>Dominio propio</b></td><td>Ej. un subdominio: <b>bookings.tudominio.com</b>. Se configura un CNAME → admin.beds24.com.</td><td><span class="pill wait">Por comprar</span></td></tr>
+      <tr><td><b>SSL en el dominio</b></td><td>Obligatorio. Beds24 recomienda Cloudflare (gratis).</td><td><span class="pill wait">Al comprar dominio</span></td></tr>
+      <tr><td><b>Logo</b></td><td>Archivo <b>.png, altura 70px</b>. Se envía a Beds24 con tu owner ID (168395).</td><td><span class="pill wait">Por diseñar</span></td></tr>
+      <tr><td><b>Favicon</b></td><td>Archivo <b>.ico, máx 10kb</b>.</td><td><span class="pill wait">Por diseñar</span></td></tr>
+      <tr><td><b>Servidor de correo</b></td><td>Solo si quieres que los correos salgan desde tu dirección. Opcional al inicio.</td><td><span class="pill wait">Opcional</span></td></tr>
+    </table>
+  </div>
+
+  <h2>4. Tu capa de AI <span class="pill ai">Tu diferenciador</span></h2>
+  <div class="card">
+    <h3>🟣 Lo que ya tienes corriendo</h3>
+    <ul>
+      <li><b>Bot de mensajería (airbnb_chat)</b> — responde inquiries/mensajes de huéspedes.</li>
+      <li><b>Bot de reviews (airbnb_reviews)</b> — reseña automática + avisos, con guardia por propiedad (ROOM_TEMPLATE).</li>
+    </ul>
+    <div class="note">Estos bots son la razón por la que puedes cobrar más que "un Beds24 pelado". Para el producto Canalix hay que dejarlos <b>multi-cliente</b>: que cada sub-cuenta tenga sus propias propiedades y plantillas sin pisarse.</div>
+  </div>
+  <div class="card">
+    <h3>🟣 Por definir (cuéntame para aplanarlo)</h3>
+    <ul>
+      <li>¿Qué otras funciones de <b>AI</b> quieres incluir? (precios dinámicos, respuestas inteligentes, resúmenes, detección de reservas problema, etc.)</li>
+      <li>¿El AI se ofrece a <b>todos los planes</b> o es un add-on premium?</li>
+      <li>¿Dónde corre hoy la infraestructura de los bots? (para planear el multi-cliente)</li>
+    </ul>
+  </div>
+
+  <h2>5. Roadmap — en qué orden se cimenta</h2>
+  <div class="card">
+    <div class="phase done"><div class="n">✓</div><div><b>Fase 0 — Cuenta lista.</b> Saldo pagado, cuenta destrabada. <span class="pill ok">Hecho</span></div></div>
+    <div class="phase wait"><div class="n">1</div><div><b>Fase 1 — Activar reseller.</b> Enviar el ticket (listo). Esperar activación de Beds24. <span class="pill wait">En curso</span></div></div>
+    <div class="phase"><div class="n">2</div><div><b>Fase 2 — Marca + dominio.</b> Decidir nombre, comprar dominio, SSL (Cloudflare), diseñar logo .png 70px + favicon .ico, enviarlos a Beds24.</div></div>
+    <div class="phase"><div class="n">3</div><div><b>Fase 3 — Configurar white-label.</b> Menú RESELLER: subdominio, business name, "powered by" URL, subir logo/favicon. Ajustar palabras del panel a español.</div></div>
+    <div class="phase"><div class="n">4</div><div><b>Fase 4 — Sub-cuentas.</b> Crear la plantilla de sub-cuenta (roles, permisos, menús ocultos) para clonar en cada cliente.</div></div>
+    <div class="phase"><div class="n">5</div><div><b>Fase 5 — Integrar tu AI.</b> Dejar los bots multi-cliente conectados por API a cada sub-cuenta.</div></div>
+    <div class="phase"><div class="n">6</div><div><b>Fase 6 — Migrar cliente piloto.</b> Un cliente real de prueba (usa el checklist de onboarding) para pulir el flujo antes de vender.</div></div>
+  </div>
+
+  <div class="foot">Blueprint interno Canalix · basado en la documentación oficial de Beds24 (Reseller + Private Label) · v1 · sept 2026<br>Fuentes: wiki.beds24.com/index.php/Reseller · wiki.beds24.com/index.php/Private_Label</div>
+</div>
+</body>
+</html>
