@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canalix — Checklist de onboarding y migración de clientes</title>
+<style>
+  :root{
+    --brand:#1F6FEB; --brand-dark:#0B4FCC; --ink:#0E1726; --muted:#5B6b80;
+    --bg:#ffffff; --soft:#F4F7FB; --line:#E3E9F2; --ok:#16A34A; --warn:#B45309;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--soft);line-height:1.55;padding:32px 16px}
+  .wrap{max-width:860px;margin:0 auto}
+  .logo{font-weight:800;font-size:24px;letter-spacing:-.5px}
+  .logo span{color:var(--brand)}
+  .sub{color:var(--muted);margin:4px 0 20px;font-size:15px}
+  .bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+  .prog{flex:1;min-width:200px;height:12px;background:var(--line);border-radius:999px;overflow:hidden}
+  .prog i{display:block;height:100%;width:0;background:var(--ok);transition:.25s}
+  .pct{font-weight:800;color:var(--ok);font-size:15px;min-width:44px;text-align:right}
+  .btn{padding:9px 16px;border:1.5px solid var(--line);background:#fff;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;color:var(--muted)}
+  .btn:hover{border-color:var(--brand);color:var(--brand)}
+  .phase{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:16px}
+  .phase h2{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--brand);margin-bottom:4px}
+  .phase .goal{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .item{display:flex;gap:12px;padding:11px 0;border-top:1px dashed var(--line);align-items:flex-start;cursor:pointer}
+  .item:hover{background:#FAFCFF}
+  .item input{margin-top:3px;width:18px;height:18px;flex-shrink:0;accent-color:var(--ok);cursor:pointer}
+  .item .txt{flex:1}
+  .item .txt b{font-weight:700}
+  .item.done .txt{opacity:.5;text-decoration:line-through}
+  .tip{font-size:12.5px;color:var(--muted);display:block;margin-top:2px}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:1px}
+  .tag.cli{background:#FEF3C7;color:var(--warn)}
+  .tag.age{background:#DBEAFE;color:var(--brand-dark)}
+  .foot{color:var(--muted);font-size:12px;margin-top:20px;text-align:center;line-height:1.6}
+  .legend{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .legend .tag{margin-left:0;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">Canal<span>ix</span></div>
+  <div class="sub">Checklist de onboarding y migración — un cliente nuevo, de principio a fin.</div>
+
+  <div class="legend">
+    <span class="tag age">Agente</span> lo hace tu equipo &nbsp;·&nbsp;
+    <span class="tag cli">Cliente</span> necesitas algo del dueño de la propiedad
+  </div>
+
+  <div class="bar">
+    <div class="prog"><i id="progBar"></i></div>
+    <div class="pct" id="pctTxt">0%</div>
+    <button class="btn" id="resetBtn">Reiniciar</button>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="foot">Runbook interno Canalix · el progreso se guarda solo en este navegador · duplica esta página por cada cliente nuevo · v1</div>
+</div>
+
+<script>
+const DATA = [
+  {h:"Fase 0 — Antes de tocar nada", goal:"Reunir accesos y expectativas. No migres a ciegas.", items:[
+    ["Confirmar los canales del cliente","Airbnb, Booking, Expedia, Vrbo — cuáles usa y cuántas propiedades en cada uno.","cli"],
+    ["Pedir accesos a cada canal","Login de Airbnb/Booking del dueño, o que te agregue como co-anfitrión/usuario. Nunca pidas contraseñas por chat; que te dé acceso desde su cuenta.","cli"],
+    ["Anotar reglas actuales por propiedad","Precio base, estadía mínima, check-in/out, reglas de la casa, mensajes automáticos que ya usa.","age"],
+    ["Screenshot del calendario actual","Foto de las reservas ya existentes de cada propiedad — es tu red de seguridad contra overbooking.","age"],
+  ]},
+  {h:"Fase 1 — Crear la propiedad en el sistema", goal:"Cada alojamiento como propiedad + room, bien nombrado.", items:[
+    ["Importar cada listing desde Airbnb","Usar Import as new. Trae fotos, precios y calendario de una.","age"],
+    ["Renombrar propiedad y room con código interno","Ej: \"402 · Nombre corto\". Consistente para que el robot y el equipo lo encuentren rápido.","age"],
+    ["Verificar min stay = igual al canal","La estadía mínima debe copiar la del anuncio original, no la default.","age"],
+    ["Revisar que el calendario importado cuadre","Comparar contra el screenshot de Fase 0. Si falta una reserva, bloquear manual antes de conectar.","age"],
+  ]},
+  {h:"Fase 2 — Conectar los canales", goal:"Un solo calendario manda a todos. Aquí se mata el overbooking.", items:[
+    ["Conectar el listing y poner Sync = Everything","Precios, disponibilidad, reservas — todo sincronizado en ambas vías.","age"],
+    ["Conectar los canales extra (Booking/Expedia/Vrbo)","Mapear cada room al room correcto del otro canal. Doble-chequear el mapeo.","age"],
+    ["Prueba de humo: bloquear 1 noche y ver que cierre en todos","Bloquea una fecha en el sistema y confirma que se cierra en Airbnb y Booking en minutos.","age"],
+    ["Confirmar que no manda Inventory = 0 por error","Si el room se cae a 0 disponible sin motivo, revisar mapeo antes de seguir.","age"],
+  ]},
+  {h:"Fase 3 — Automatizaciones", goal:"Que el sistema trabaje solo: mensajes y reviews.", items:[
+    ["Cargar mensajes automáticos al huésped","Confirmación, instrucciones de check-in, recordatorio de check-out — en la voz del cliente.","age"],
+    ["Activar Auto Review Text","Reseña automática al huésped al terminar la estadía.","age"],
+    ["Agregar el room id al robot (ROOM_TEMPLATE) + push","Para que el bot de avisos y reviews reconozca la propiedad nueva.","age"],
+    ["Verificar que las inquiries lleguen al robot","Mandar un mensaje de prueba desde Airbnb y confirmar que el dispatch lo recibe.","age"],
+  ]},
+  {h:"Fase 4 — Entrega y cobro", goal:"Cliente informado, tú cobrando. Cierra el ciclo.", items:[
+    ["Walkthrough de 15 min con el cliente","Mostrarle el calendario unificado y dónde ve sus reservas. Menos preguntas después.","cli"],
+    ["Dejar por escrito qué incluye su plan","Propiedades cubiertas, canales, automatizaciones — para evitar malentendidos.","age"],
+    ["Configurar el cobro mensual","Definir plan (Starter/Pro/Agencia) y método de pago recurrente.","cli"],
+    ["Agendar revisión a los 7 días","Chequear que no hubo overbookings ni mensajes fallidos la primera semana.","age"],
+  ]},
+];
+
+const KEY='canalix_onboarding_v1';
+let state = {};
+try{ state = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ state={}; }
+
+const phases = document.getElementById('phases');
+let total=0;
+DATA.forEach((p,pi)=>{
+  const div=document.createElement('div'); div.className='phase';
+  div.innerHTML=`<h2>${p.h}</h2><div class="goal">${p.goal}</div>`;
+  p.items.forEach((it,ii)=>{
+    const id=`p${pi}i${ii}`; total++;
+    const done=!!state[id];
+    const el=document.createElement('label');
+    el.className='item'+(done?' done':''); el.dataset.id=id;
+    el.innerHTML=`<input type="checkbox" ${done?'checked':''}>
+      <span class="txt"><b>${it[0]}</b><span class="tag ${it[2]}">${it[2]==='cli'?'Cliente':'Agente'}</span>
+      <span class="tip">${it[1]}</span></span>`;
+    el.querySelector('input').addEventListener('change',e=>{
+      state[id]=e.target.checked; el.classList.toggle('done',e.target.checked);
+      localStorage.setItem(KEY,JSON.stringify(state)); update();
+    });
+    div.appendChild(el);
+  });
+  phases.appendChild(div);
+});
+
+function update(){
+  const done=Object.values(state).filter(Boolean).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('progBar').style.width=pct+'%';
+  document.getElementById('pctTxt').textContent=pct+'%';
+}
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm('¿Reiniciar el checklist para un cliente nuevo?')){
+    state={}; localStorage.removeItem(KEY);
+    document.querySelectorAll('.item').forEach(el=>{el.classList.remove('done');el.querySelector('input').checked=false;});
+    update();
+  }
+});
+update();
+</script>
+</body>
+</html>
