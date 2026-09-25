@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canalix — Calculadora de precios y margen</title>
+<style>
+  :root{
+    --brand:#1F6FEB; --brand-dark:#0B4FCC; --ink:#0E1726; --muted:#5B6b80;
+    --bg:#ffffff; --soft:#F4F7FB; --line:#E3E9F2; --ok:#16A34A; --accent:#00C2A8;
+    --brand-name:"Canalix";
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--soft);line-height:1.55;padding:32px 16px}
+  .wrap{max-width:920px;margin:0 auto}
+  .logo{font-weight:800;font-size:24px;letter-spacing:-.5px;margin-bottom:4px}
+  .logo span{color:var(--brand)}
+  .sub{color:var(--muted);margin-bottom:24px;font-size:15px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+  .card h2{font-size:16px;text-transform:uppercase;letter-spacing:1px;color:var(--brand);margin-bottom:18px}
+  label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+  .hint{font-weight:400;color:var(--muted);font-size:12px}
+  input[type=number]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit}
+  input:focus{outline:none;border-color:var(--brand)}
+  .row{display:flex;gap:12px}
+  .row>div{flex:1}
+  .result{background:linear-gradient(180deg,#F4F7FB,#fff);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:20px}
+  .big{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .big:last-child{border-bottom:none}
+  .big .k{color:var(--muted);font-size:14px}
+  .big .v{font-weight:800;font-size:22px}
+  .v.ok{color:var(--ok)}
+  .v.brand{color:var(--brand)}
+  .note{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+  th,td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  td.plan{font-weight:700}
+  .foot{color:var(--muted);font-size:12px;margin-top:24px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">Canal<span>ix</span></div>
+  <div class="sub">Calculadora de precios y margen — define cuánto cobrar por propiedad y cuánto ganas.</div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1. Tu costo (Beds24)</h2>
+      <label>Costo mayorista por propiedad / mes <span class="hint">(lo que te cobra Beds24, USD)</span></label>
+      <input type="number" id="cost" value="3.50" step="0.10" min="0">
+      <label>Fee fijo mensual de la cuenta <span class="hint">(base que pagas a Beds24 aunque tengas pocas props, USD)</span></label>
+      <input type="number" id="base" value="0" step="1" min="0">
+      <label>Costo de tu operación por cliente / mes <span class="hint">(soporte, tiempo de tus agentes, USD — opcional)</span></label>
+      <input type="number" id="ops" value="0" step="1" min="0">
+    </div>
+
+    <div class="card">
+      <h2>2. Tu precio de venta</h2>
+      <label>Precio que le cobras al cliente por propiedad / mes <span class="hint">(USD)</span></label>
+      <input type="number" id="price" value="12" step="0.50" min="0">
+      <label>Propiedades por cliente (promedio)</label>
+      <input type="number" id="propsPerClient" value="3" step="1" min="1">
+      <label>Número de clientes</label>
+      <input type="number" id="clients" value="10" step="1" min="1">
+    </div>
+  </div>
+
+  <div class="result">
+    <div class="big"><span class="k">Propiedades totales facturadas</span><span class="v" id="rTotalProps">—</span></div>
+    <div class="big"><span class="k">Ingreso mensual (lo que cobras)</span><span class="v brand" id="rRev">—</span></div>
+    <div class="big"><span class="k">Costo mensual (Beds24 + operación)</span><span class="v" id="rCost">—</span></div>
+    <div class="big"><span class="k">Margen mensual (ganancia)</span><span class="v ok" id="rProfit">—</span></div>
+    <div class="big"><span class="k">Margen por propiedad</span><span class="v" id="rPerProp">—</span></div>
+    <div class="big"><span class="k">% de margen</span><span class="v" id="rPct">—</span></div>
+    <div class="big"><span class="k">Ganancia anual proyectada</span><span class="v ok" id="rYear">—</span></div>
+    <div class="note" id="warn"></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>3. Sugerencia de planes (con tu markup)</h2>
+    <div class="hint" style="margin-bottom:10px">Markup aplicado sobre tu costo mayorista. Ajusta el multiplicador y copia estos números a la landing.</div>
+    <label style="display:inline-block;margin-right:16px">Multiplicador Starter <input type="number" id="mStarter" value="3.0" step="0.1" style="width:90px;display:inline-block"></label>
+    <label style="display:inline-block;margin-right:16px">Multiplicador Pro <input type="number" id="mPro" value="3.5" step="0.1" style="width:90px;display:inline-block"></label>
+    <label style="display:inline-block">Multiplicador Agencia <input type="number" id="mAg" value="4.0" step="0.1" style="width:90px;display:inline-block"></label>
+    <table>
+      <thead><tr><th>Plan</th><th>Props incluidas</th><th>Precio / mes</th><th>Tu costo</th><th>Tu margen</th></tr></thead>
+      <tbody id="planBody"></tbody>
+    </table>
+  </div>
+
+  <div class="foot">Calculadora interna Canalix · todo en USD · ajusta los valores a tu realidad · v1</div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const money = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const money0 = n => '$' + Math.round(n).toLocaleString('en-US');
+  const inputs = ['cost','base','ops','price','propsPerClient','clients','mStarter','mPro','mAg'];
+
+  function calc(){
+    const cost = +$('cost').value||0, base = +$('base').value||0, ops = +$('ops').value||0;
+    const price = +$('price').value||0, ppc = +$('propsPerClient').value||0, clients = +$('clients').value||0;
+    const totalProps = ppc * clients;
+    const rev = price * totalProps;
+    const totalCost = (cost * totalProps) + base + (ops * clients);
+    const profit = rev - totalCost;
+    const perProp = totalProps ? profit/totalProps : 0;
+    const pct = rev ? (profit/rev*100) : 0;
+
+    $('rTotalProps').textContent = totalProps.toLocaleString('en-US');
+    $('rRev').textContent = money(rev);
+    $('rCost').textContent = money(totalCost);
+    $('rProfit').textContent = money(profit);
+    $('rPerProp').textContent = money(perProp);
+    $('rPct').textContent = pct.toFixed(1) + '%';
+    $('rYear').textContent = money0(profit*12);
+
+    const warn = $('warn');
+    if(price <= cost){ warn.innerHTML = '⚠️ Tu precio de venta es igual o menor a tu costo por propiedad — estás perdiendo dinero. Sube el precio.'; warn.style.color='#B91C1C'; }
+    else if(pct < 40){ warn.innerHTML = 'Margen ajustado. Para un negocio de reventa sano apunta a 60%+ de margen.'; warn.style.color='var(--muted)'; }
+    else { warn.innerHTML = '✅ Margen saludable. Con estos números escalar clientes es muy rentable.'; warn.style.color='var(--ok)'; }
+
+    const plans = [
+      {name:'Starter', props:3, mult:+$('mStarter').value||1},
+      {name:'Pro', props:10, mult:+$('mPro').value||1},
+      {name:'Agencia', props:25, mult:+$('mAg').value||1},
+    ];
+    $('planBody').innerHTML = plans.map(p=>{
+      const planPrice = cost * p.props * p.mult;
+      const planCost = cost * p.props;
+      const planMargin = planPrice - planCost;
+      return `<tr><td class="plan">${p.name}</td><td>hasta ${p.props}</td><td>${money0(planPrice)}</td><td>${money0(planCost)}</td><td style="color:var(--ok);font-weight:700">${money0(planMargin)}</td></tr>`;
+    }).join('');
+  }
+  inputs.forEach(id=>$(id).addEventListener('input',calc));
+  calc();
+</script>
+</body>
+</html>
