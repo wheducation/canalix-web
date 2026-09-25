@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canalix — Channel Manager y PMS para anfitriones y property managers</title>
+<meta name="description" content="Administra todos tus alojamientos de Airbnb, Booking.com, Expedia y Vrbo en un solo lugar. Sincronización de calendarios y precios, cero overbookings, mensajería automática y motor de reservas directas.">
+<style>
+  :root{
+    /* ==== MARCA (cambiar aquí para rebrandear) ==== */
+    --brand:#1F6FEB; --brand-dark:#0B4FCC; --ink:#0E1726; --muted:#5B6b80;
+    --bg:#ffffff; --soft:#F4F7FB; --line:#E3E9F2; --ok:#16A34A; --accent:#00C2A8;
+    --brand-name:"Canalix";
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:inherit;text-decoration:none}
+  .btn{display:inline-block;padding:14px 26px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;border:none;transition:.15s}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-primary:hover{background:var(--brand-dark)}
+  .btn-ghost{background:#fff;color:var(--brand);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--brand)}
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-weight:800;font-size:22px;letter-spacing:-.5px}
+  .logo span{color:var(--brand)}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{color:var(--muted);font-weight:600;font-size:15px}
+  .nav-links a:hover{color:var(--ink)}
+  @media(max-width:820px){.nav-links{display:none}}
+  /* Hero */
+  .hero{padding:84px 0 70px;background:linear-gradient(180deg,#F4F7FB 0%,#fff 100%)}
+  .hero h1{font-size:52px;line-height:1.08;letter-spacing:-1.5px;font-weight:800;max-width:820px}
+  .hero h1 em{color:var(--brand);font-style:normal}
+  .hero p.sub{font-size:20px;color:var(--muted);margin:22px 0 32px;max-width:640px}
+  .hero .cta{display:flex;gap:14px;flex-wrap:wrap}
+  .badges{display:flex;gap:22px;margin-top:34px;flex-wrap:wrap;align-items:center;color:var(--muted);font-weight:600;font-size:14px}
+  .badges b{color:var(--ink)}
+  @media(max-width:820px){.hero h1{font-size:36px}.hero p.sub{font-size:17px}}
+  /* Logos strip */
+  .strip{padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
+  .strip .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-weight:700}
+  .chan{padding:8px 16px;background:var(--soft);border:1px solid var(--line);border-radius:999px;font-size:14px;color:var(--ink)}
+  /* Sections */
+  section{padding:72px 0}
+  .eyebrow{color:var(--brand);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;font-size:13px}
+  h2{font-size:36px;letter-spacing:-1px;font-weight:800;margin:8px 0 14px}
+  .lead{color:var(--muted);font-size:18px;max-width:640px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
+  .card .ico{width:46px;height:46px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px}
+  .card h3{font-size:19px;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:15px}
+  /* How */
+  .how{background:var(--soft)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;position:relative}
+  .step .n{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  /* Pricing */
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+  @media(max-width:820px){.price-grid{grid-template-columns:1fr}}
+  .plan{border:1px solid var(--line);border-radius:18px;padding:30px;background:#fff}
+  .plan.feat{border:2px solid var(--brand);box-shadow:0 20px 40px -20px rgba(31,111,235,.4);position:relative}
+  .plan.feat:before{content:"Más popular";position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px}
+  .plan h3{font-size:20px}
+  .plan .amt{font-size:40px;font-weight:800;margin:12px 0 2px}
+  .plan .amt small{font-size:16px;color:var(--muted);font-weight:600}
+  .plan ul{list-style:none;margin:20px 0}
+  .plan li{padding:8px 0;color:var(--muted);font-size:15px;display:flex;gap:10px}
+  .plan li:before{content:"✓";color:var(--ok);font-weight:800}
+  /* CTA */
+  .cta-band{background:linear-gradient(120deg,var(--brand),var(--brand-dark));color:#fff;border-radius:24px;padding:56px;text-align:center;margin:40px 0}
+  .cta-band h2{color:#fff}
+  .cta-band p{opacity:.9;font-size:18px;max-width:560px;margin:10px auto 26px}
+  .cta-band .btn-primary{background:#fff;color:var(--brand)}
+  /* Form */
+  form{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin-top:36px}
+  form .full{grid-column:1/-1}
+  input,textarea{width:100%;padding:14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit}
+  input:focus,textarea:focus{outline:none;border-color:var(--brand)}
+  @media(max-width:820px){form{grid-template-columns:1fr}h2{font-size:28px}}
+  footer{border-top:1px solid var(--line);padding:40px 0;color:var(--muted);font-size:14px}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="logo">Canali<span>x</span></div>
+    <nav class="nav-links">
+      <a href="#features">Funciones</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#precios">Precios</a>
+      <a href="#contacto" class="btn btn-primary" style="padding:10px 20px">Solicitar demo</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Channel Manager + PMS + Motor de reservas</div>
+    <h1>Todos tus alojamientos, <em>en una sola pantalla.</em></h1>
+    <p class="sub">Sincroniza Airbnb, Booking.com, Expedia y Vrbo en tiempo real. Cero overbookings, precios y calendarios siempre al día, y reservas directas sin comisión. Diseñado para anfitriones y administradores de propiedades en Latinoamérica.</p>
+    <div class="cta">
+      <a href="#contacto" class="btn btn-primary">Empieza gratis</a>
+      <a href="#como" class="btn btn-ghost">Ver cómo funciona</a>
+    </div>
+    <div class="badges">
+      <span>✅ <b>Sin overbookings</b></span>
+      <span>⚡ <b>Sincronización en tiempo real</b></span>
+      <span>🌎 <b>Soporte en español</b></span>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <span style="color:var(--muted)">Conecta con:</span>
+    <span class="chan">Airbnb</span>
+    <span class="chan">Booking.com</span>
+    <span class="chan">Expedia</span>
+    <span class="chan">Vrbo</span>
+    <span class="chan">+ tu página web</span>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">Todo en uno</div>
+    <h2>Deja de saltar entre 5 pestañas</h2>
+    <p class="lead">Una plataforma para gestionar precios, calendarios, reservas y huéspedes de todas tus propiedades y canales.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🔄</div><h3>Sincronización en tiempo real</h3><p>Un cambio de precio o disponibilidad se refleja al instante en todos los canales. Nunca más una doble reserva.</p></div>
+      <div class="card"><div class="ico">📅</div><h3>Calendario unificado</h3><p>Ve todas tus reservas de todos los aptos y canales en un solo calendario, con bloqueos y limpiezas.</p></div>
+      <div class="card"><div class="ico">💬</div><h3>Mensajería automática</h3><p>Mensajes de bienvenida, instrucciones de check-in y reseñas automáticas en la voz de tu marca.</p></div>
+      <div class="card"><div class="ico">🌐</div><h3>Motor de reservas directas</h3><p>Tu propia página de reservas sin comisión de OTA. Cobra directo y quédate con más margen.</p></div>
+      <div class="card"><div class="ico">💵</div><h3>Precios dinámicos</h3><p>Reglas de precio por temporada, estadía mínima y ocupación para maximizar tu ingreso.</p></div>
+      <div class="card"><div class="ico">📊</div><h3>Reportes y pagos</h3><p>Ingresos por propiedad, ocupación y payouts claros, exportables cuando los necesites.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="como" class="how">
+  <div class="wrap">
+    <div class="eyebrow">Simple</div>
+    <h2>Empieza en 3 pasos</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Conecta tus canales</h3><p>Enlazamos tus cuentas de Airbnb, Booking, Expedia y Vrbo. Importamos tus propiedades y reservas.</p></div>
+      <div class="step"><div class="n">2</div><h3>Configuramos por ti</h3><p>Precios, calendarios, mensajería y tu motor de reservas listos. Te acompañamos en la migración.</p></div>
+      <div class="step"><div class="n">3</div><h3>Administra todo en un lugar</h3><p>Un solo panel para todo tu portafolio. Más control, menos errores, más ingresos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="precios">
+  <div class="wrap">
+    <div class="eyebrow">Precios</div>
+    <h2>Planes para cada tamaño</h2>
+    <p class="lead">Precios de referencia — ajústalos a tu mercado. Sin permanencia.</p>
+    <div class="price-grid">
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="amt">$XX<small> /mes</small></div>
+        <p style="color:var(--muted)">Para 1–3 propiedades</p>
+        <ul><li>Todos los canales</li><li>Calendario unificado</li><li>Motor de reservas</li><li>Soporte en español</li></ul>
+        <a href="#contacto" class="btn btn-ghost" style="width:100%;text-align:center">Empezar</a>
+      </div>
+      <div class="plan feat">
+        <h3>Pro</h3>
+        <div class="amt">$XX<small> /mes</small></div>
+        <p style="color:var(--muted)">Para 4–15 propiedades</p>
+        <ul><li>Todo lo de Starter</li><li>Mensajería automática</li><li>Precios dinámicos</li><li>Reportes avanzados</li><li>Onboarding asistido</li></ul>
+        <a href="#contacto" class="btn btn-primary" style="width:100%;text-align:center">Empezar</a>
+      </div>
+      <div class="plan">
+        <h3>Agencia</h3>
+        <div class="amt">A medida</div>
+        <p style="color:var(--muted)">16+ propiedades / operadores</p>
+        <ul><li>Todo lo de Pro</li><li>Multi-usuario y permisos</li><li>Cuenta dedicada</li><li>Facturación consolidada</li></ul>
+        <a href="#contacto" class="btn btn-ghost" style="width:100%;text-align:center">Hablar con ventas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>¿Listo para dejar de perder reservas?</h2>
+      <p>Agenda una demo de 15 minutos y te mostramos cómo tener todo tu portafolio bajo control.</p>
+      <a href="#contacto" class="btn btn-primary">Solicitar demo gratis</a>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" style="padding-top:20px">
+  <div class="wrap">
+    <div class="eyebrow">Contacto</div>
+    <h2>Hablemos</h2>
+    <p class="lead">Déjanos tus datos y te contactamos hoy mismo.</p>
+    <form onsubmit="event.preventDefault();this.querySelector('.msg').style.display='block';this.reset();">
+      <input type="text" placeholder="Nombre" required>
+      <input type="email" placeholder="Correo" required>
+      <input type="tel" placeholder="WhatsApp / teléfono" class="full">
+      <input type="number" placeholder="¿Cuántas propiedades administras?" class="full">
+      <textarea placeholder="Cuéntanos qué canales usas hoy" rows="4" class="full"></textarea>
+      <div class="full"><button class="btn btn-primary" type="submit" style="width:100%">Solicitar demo</button></div>
+      <p class="full msg" style="display:none;color:var(--ok);font-weight:700">¡Gracias! Te contactamos pronto. (Conecta este formulario a tu correo/CRM.)</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div><span class="logo" style="font-size:18px">Canali<span>x</span></span> · Channel Manager, PMS y motor de reservas.</div>
+    <div>© <span id="y"></span> Canalix. Todos los derechos reservados.</div>
+  </div>
+</footer>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
